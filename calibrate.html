@@ -20,9 +20,9 @@
       <div class="arview-stage">
         <model-viewer id="mv" camera-controls touch-action="pan-y" shadow-intensity="1"
                       ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed" ar-placement="floor"
-                      src="/models/calibration-cube-1m.glb" alt="One metre calibration cube">
+                      src="/models/calibration-cube-75cm.glb" alt="Calibration cube">
           <button slot="ar-button" id="ar-button" class="btn btn-block">
-            <span id="ar-icon"></span> Place the 1 m cube
+            <span id="ar-icon"></span> <span id="ar-label">Place the 75 cm cube</span>
           </button>
         </model-viewer>
         <p id="stage-note" class="status"></p>
@@ -37,21 +37,24 @@
         </p>
 
         <ol class="steps">
-          <li>Tap <strong>Place the 1 m cube</strong> and set it on the floor.</li>
+          <li>Tap <strong>Place the cube</strong> and set it on the floor.</li>
           <li>Hold a tape measure against one vertical edge, on the real floor.</li>
           <li>Type what the tape actually reads.</li>
         </ol>
 
+        <span class="field-label">Reference cube</span>
+        <div id="refs" class="presets"></div>
+
         <div class="scale-card">
           <span class="scale-label">Reference height</span>
-          <span class="scale-dims">100 cm</span>
+          <span id="ref-dims" class="scale-dims">75 cm</span>
           <span class="scale-verified">verified to \u00b10.0%</span>
         </div>
 
         <label class="field">
           <span>What did the tape read?</span>
           <span class="field-row">
-            <input id="measured" type="number" min="40" max="160" step="0.5" inputmode="decimal" placeholder="110" />
+            <input id="measured" type="number" min="5" max="200" step="0.5" inputmode="decimal" placeholder="85" />
             <span class="status">cm</span>
           </span>
         </label>

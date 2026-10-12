@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Calibration Cube (1 m)">
-  <rect width="400" height="400" fill="#F3F5F7"/>
-  <line x1="27.599999999999998" y1="354" x2="372.4" y2="354" stroke="#E8ECEF" stroke-width="1.5"/>
-  <rect x="114.4" y="182.9" width="171.1" height="171.1" rx="2"
-        fill="#FFFFFF" stroke="#141718" stroke-width="1.5"/>
-  <text x="200" y="377" fill="#6C7275" font-family="Poppins,sans-serif" font-size="13" text-anchor="middle">100 × 100 × 100 cm</text>
-  <text x="200" y="273.4" fill="#141718" font-family="Poppins,sans-serif" font-size="14" font-weight="500" text-anchor="middle">Calibration Cube (1 m)</text>
-</svg>

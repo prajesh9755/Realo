@@ -5,7 +5,7 @@
       "id": "calibration-cube-1m",
       "name": "Calibration Cube (1 m)",
       "blurb": "Not a product. A 1.000 m reference cube used to prove the pipeline is metric. Place it next to a tape measure.",
-      "photo": "/photos/calibration-cube-1m.svg",
+      "photo": "/photos/calibration-cube-1m.png",
       "model": "/models/calibration-cube-1m.glb",
       "price": null,
       "dims_cm": {
@@ -25,7 +25,7 @@
       "id": "calibration-cube-30cm",
       "name": "Calibration Cube (30 cm)",
       "blurb": "Not a product. A 30 cm reference cube for close-range scale checks.",
-      "photo": "/photos/calibration-cube-30cm.svg",
+      "photo": "/photos/calibration-cube-30cm.png",
       "model": "/models/calibration-cube-30cm.glb",
       "price": null,
       "dims_cm": {
@@ -44,14 +44,14 @@
     {
       "id": "pot-plant",
       "name": "Potted Plant",
-      "blurb": "Leafy indoor plant in a white ceramic pot. Floor standing.",
-      "photo": "/photos/pot-plant.svg",
+      "blurb": "Small leafy plant in a white ceramic pot. Sits on a table or shelf.",
+      "photo": "/photos/pot-plant.png",
       "model": "/models/pot-plant.glb",
       "price": 899,
       "dims_cm": {
-        "w": 36,
-        "h": 72,
-        "d": 31
+        "w": 15,
+        "h": 30,
+        "d": 13
       },
       "placement": "floor",
       "source": {
@@ -64,7 +64,7 @@
       "id": "stool-wooden",
       "name": "Wooden Stool",
       "blurb": "Simple round stool. Doubles as a plant stand or side table.",
-      "photo": "/photos/stool-wooden.svg",
+      "photo": "/photos/stool-wooden.png",
       "model": "/models/stool-wooden.glb",
       "price": 2499,
       "dims_cm": {
@@ -81,15 +81,15 @@
     },
     {
       "id": "closet",
-      "name": "Two-Door Closet",
-      "blurb": "Full-height wardrobe. Measure your alcove before buying.",
-      "photo": "/photos/closet.svg",
+      "name": "Storage Cabinet",
+      "blurb": "Open shelving with cupboard doors and a drawer. Sits against a wall.",
+      "photo": "/photos/closet.png",
       "model": "/models/closet.glb",
       "price": 18999,
       "dims_cm": {
-        "w": 191,
-        "h": 180,
-        "d": 44
+        "w": 127,
+        "h": 120,
+        "d": 29
       },
       "placement": "floor",
       "source": {
@@ -102,7 +102,7 @@
       "id": "lamp-table",
       "name": "Table Lamp With Shade",
       "blurb": "Compact bedside lamp with a fabric shade.",
-      "photo": "/photos/lamp-table.svg",
+      "photo": "/photos/lamp-table.png",
       "model": "/models/lamp-table.glb",
       "price": 1499,
       "dims_cm": {
@@ -121,7 +121,7 @@
       "id": "chair-wooden",
       "name": "Wooden Chair",
       "blurb": "Classic wooden dining chair with a tall back.",
-      "photo": "/photos/chair-wooden.svg",
+      "photo": "/photos/chair-wooden.png",
       "model": "/models/chair-wooden.glb",
       "price": 3999,
       "dims_cm": {
@@ -137,16 +137,36 @@
       }
     },
     {
-      "id": "test-75cm",
-      "name": "Test Cube (75 cm)",
-      "blurb": "Diagnostic. Should measure exactly 75 cm per edge.",
-      "photo": "/photos/calibration-cube-30cm.svg",
-      "model": "/models/test-75cm.glb",
+      "id": "calibration-cube-75cm",
+      "name": "Calibration Cube (75 cm)",
+      "blurb": "Reference cube for calibration. Best balance of floor space and measuring accuracy.",
+      "photo": "/photos/calibration-cube-75cm.png",
+      "model": "/models/calibration-cube-75cm.glb",
       "price": null,
       "dims_cm": {
         "w": 75,
         "h": 75,
         "d": 75
+      },
+      "placement": "floor",
+      "calibration": true,
+      "source": {
+        "author": "this project",
+        "url": null,
+        "license": "CC0"
+      }
+    },
+    {
+      "id": "calibration-cube-50cm",
+      "name": "Calibration Cube (50 cm)",
+      "blurb": "Smaller reference cube for tight spaces.",
+      "photo": "/photos/calibration-cube-50cm.png",
+      "model": "/models/calibration-cube-50cm.glb",
+      "price": null,
+      "dims_cm": {
+        "w": 50,
+        "h": 50,
+        "d": 50
       },
       "placement": "floor",
       "calibration": true,

@@ -158,7 +158,6 @@ img { max-width: 100%; display: block; }
   width: 100%;
   height: 100%;
   object-fit: contain;
-  mix-blend-mode: multiply;
 }
 
 .badges {
@@ -317,7 +316,7 @@ img { max-width: 100%; display: block; }
   place-items: center;
   overflow: hidden;
 }
-.pdp-media img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+.pdp-media img { width: 100%; height: 100%; object-fit: contain; }
 
 .pdp h1 { font-size: var(--h3); margin-bottom: 12px; }
 
@@ -695,3 +694,9 @@ kbd {
   margin-top: 10px;
 }
 .calibrate-link:hover { color: var(--ink); border-color: var(--ink); }
+
+.field-label {
+  display: block;
+  font-size: var(--t14);
+  margin-bottom: 8px;
+}

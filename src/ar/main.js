@@ -33,10 +33,21 @@ async function init() {
   verifyModelScale(product).then(report => {
     const el = document.getElementById('p-verified');
     if (!report) { el.textContent = ''; return; }
-    el.textContent = report.withinTolerance
-      ? `verified to \u00b1${(report.driftRatio * 100).toFixed(1)}%`
-      : `WARNING: asset is ${report.assetCm.h}cm, declared ${product.dims_cm.h}cm`;
-    el.classList.toggle('is-warn', !report.withinTolerance);
+
+    if (!report.withinTolerance) {
+      el.textContent = `WARNING: asset is ${report.assetCm.h}cm, declared ${product.dims_cm.h}cm`;
+      el.classList.add('is-warn');
+      return;
+    }
+
+    // Both facts matter: the asset is correct AND this device needed correcting.
+    // This resolves later than the calibration note, so it must not clobber it.
+    const cal = loadCalibration();
+    const f = correctionFactor(product.dims_cm.h, cal);
+    el.textContent = f !== 1
+      ? `verified, corrected ${describe(cal)} for this device`
+      : `verified to ±${(report.driftRatio * 100).toFixed(1)}%`;
+    el.classList.toggle('is-calibrated', f !== 1);
   });
 
   const mv = document.getElementById('mv');
@@ -47,8 +58,7 @@ async function init() {
   const calibration = loadCalibration();
   const factor = correctionFactor(product.dims_cm.h, calibration);
   if (factor !== 1) {
-    mv.setAttribute('scale', `${factor} ${factor} ${factor}`);
-    showCalibrationNote(calibration, factor);
+    mv.setAttribute('scale', `${factor} ${factor} ${factor}`);
   }
 
   mv.setAttribute('src', product.model);
@@ -97,10 +107,3 @@ function esc(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
-function showCalibrationNote(calibration, factor) {
-  const el = document.getElementById('p-verified');
-  if (!el) return;
-  const corrected = (product.dims_cm.h * factor).toFixed(1);
-  el.textContent = `corrected for this device (${describe(calibration)}), rendering at ${corrected} cm`;
-  el.classList.add('is-calibrated');
-}
