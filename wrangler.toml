@@ -1,0 +1,18 @@
+# Serves the Vite build as a static site on Workers.
+#
+# There is no Worker script: [assets] with a directory and no `main` makes the
+# Worker a pure static asset server, which is all this project needs. The
+# "hello world" default route disappears once this config is deployed.
+name = "realo"
+compatibility_date = "2025-10-01"
+
+[assets]
+directory = "./dist"
+
+# The five Vite entry points are real files in dist/, so /ar serves ar.html
+# (and /ar.html 307s to /ar). This is a multi-page site, not an SPA, so an
+# unknown path must 404 rather than fall through to index.html -- hence
+# "404-page" and not "single-page-application". There is no 404.html, so that
+# is a plain 404.
+not_found_handling = "404-page"
+html_handling = "auto-trailing-slash"
