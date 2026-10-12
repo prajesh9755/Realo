@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Calibrate this device — Realo</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <header class="wrap site-head">
+    <a class="brand" href="/">Realo</a>
+    <nav><a href="/">Shop</a><a href="/try.html">Any image</a></nav>
+    <span class="spacer"></span>
+  </header>
+
+  <main class="wrap arview">
+    <div class="section-head"><h1>Calibrate</h1></div>
+
+    <div class="arview-grid">
+      <div class="arview-stage">
+        <model-viewer id="mv" camera-controls touch-action="pan-y" shadow-intensity="1"
+                      ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed" ar-placement="floor"
+                      src="/models/calibration-cube-1m.glb" alt="One metre calibration cube">
+          <button slot="ar-button" id="ar-button" class="btn btn-block">
+            <span id="ar-icon"></span> Place the 1 m cube
+          </button>
+        </model-viewer>
+        <p id="stage-note" class="status"></p>
+      </div>
+
+      <aside class="arview-side">
+        <h2 style="font-size:20px;margin-bottom:10px">Why this exists</h2>
+        <p class="blurb">
+          Phones estimate where your floor is, and that estimate is not perfect. On some
+          devices every object lands a few centimetres too tall. Measuring a known cube once
+          lets us correct for it on this phone, in this room.
+        </p>
+
+        <ol class="steps">
+          <li>Tap <strong>Place the 1 m cube</strong> and set it on the floor.</li>
+          <li>Hold a tape measure against one vertical edge, on the real floor.</li>
+          <li>Type what the tape actually reads.</li>
+        </ol>
+
+        <div class="scale-card">
+          <span class="scale-label">Reference height</span>
+          <span class="scale-dims">100 cm</span>
+          <span class="scale-verified">verified to \u00b10.0%</span>
+        </div>
+
+        <label class="field">
+          <span>What did the tape read?</span>
+          <span class="field-row">
+            <input id="measured" type="number" min="40" max="160" step="0.5" inputmode="decimal" placeholder="110" />
+            <span class="status">cm</span>
+          </span>
+        </label>
+
+        <button id="save" class="btn btn-block">Save calibration</button>
+        <p id="result" class="status" style="margin-top:12px"></p>
+
+        <div id="current" class="callout hide">
+          <strong>Calibrated.</strong>
+          <span id="current-text"></span>
+          <button id="clear" class="btn btn-outline btn-sm" style="margin-top:12px">Remove calibration</button>
+        </div>
+
+        <p class="note"><a href="/" style="text-decoration:underline">Back to the store</a></p>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module"
+          src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.4.0/dist/model-viewer.min.js"></script>
+  <script type="module" src="/src/ar/calibrate-page.js"></script>
+</body>
+</html>

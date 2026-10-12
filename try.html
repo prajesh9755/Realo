@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Try any product image — Realo</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <div id="page">
+    <header class="wrap site-head">
+      <a class="brand" href="/">Realo</a>
+      <nav>
+        <a href="/">Shop</a>
+        <a href="/try.html">Any image</a>
+      </nav>
+      <span class="spacer"></span>
+    </header>
+
+    <main class="wrap">
+      <div class="section-head">
+        <h1>Any image</h1>
+      </div>
+
+      <div id="drop" class="drop">
+        <h2>Copy a product image, then press <kbd>Ctrl</kbd> <kbd>V</kbd></h2>
+        <p>Right click an image on any store and choose Copy image. Pasting sends the
+           pixels, so it works even where direct links are blocked.</p>
+        <label class="btn btn-outline btn-sm" style="cursor:pointer">
+          Choose a file
+          <input id="file" type="file" accept="image/*" class="hide" />
+        </label>
+      </div>
+
+      <p id="status" class="status" style="margin-top:16px"></p>
+
+      <div id="editor" class="preview-row hide">
+        <div class="cutout-box"><img id="cutout" alt="Product with background removed" /></div>
+
+        <div>
+          <h2 style="font-size:20px;margin-bottom:6px">How big is it really?</h2>
+          <p class="status" style="margin-bottom:4px">
+            The store does not publish dimensions, so pick a rough size. The proportions are
+            measured from your image, so you only set one number.
+          </p>
+
+          <div id="presets" class="presets"></div>
+
+          <div class="size-row">
+            <input id="size-range" type="range" min="3" max="250" step="1" value="60" aria-label="Size in centimetres" />
+            <input id="size-num" type="number" min="1" max="400" step="1" value="60" aria-label="Size in centimetres" />
+            <span class="status">cm</span>
+          </div>
+          <p id="derived" class="status" style="margin-bottom:24px"></p>
+
+          <button id="go-ar" class="btn btn-block"><span id="go-icon"></span> Place it in my room</button>
+
+          <p class="callout">
+            <strong>What this is.</strong> A flat cutout, not a 3D model. Width and height match
+            the size you set, but it has no depth. Convincing for posters, frames and boxes, less
+            so for a sofa. For measured 3D at true scale, use the
+            <a href="/" style="text-decoration:underline">demo store</a>.
+          </p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <canvas id="ar-canvas" class="ar-canvas hide"></canvas>
+
+  <div id="ar-ui" class="hide">
+    <div class="ar-top">
+      <div class="ar-readout">
+        <span class="name" data-name>Pasted image</span>
+        <span class="dims" data-dims></span>
+        <span class="ar-badge is-true" data-badge>your size</span>
+      </div>
+      <button class="ar-pill" data-exit aria-label="Exit"><span data-icon-close></span></button>
+    </div>
+    <div>
+      <p class="ar-coach" data-coach hidden></p>
+      <div class="ar-bottom">
+        <button class="btn btn-outline" data-reset style="background:#fff">
+          <span data-icon-refresh></span> Place again
+        </button>
+      </div>
+    </div>
+    <pre class="ar-debug" data-debug hidden></pre>
+  </div>
+
+  <script type="module" src="/src/track2/main.js"></script>
+</body>
+</html>

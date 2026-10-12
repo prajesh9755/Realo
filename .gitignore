@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vite/
+*.local
+.DS_Store
+Thumbs.db
+
+# Self-hosted imgly WASM/ONNX assets (vendored via `npm run imgly:vendor`, ~40MB)
+public/imgly/
+
+test.txt

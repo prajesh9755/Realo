@@ -1,0 +1,197 @@
+{
+  "$comment": "SINGLE SOURCE OF TRUTH for real-world dimensions. dims_cm drives the Gate-2 load assertion in src/ar/scale.js and the on-screen cm readout. Measure the real product; do not copy numbers from the 3D asset. See docs/SCALE.md.",
+  "products": [
+    {
+      "id": "calibration-cube-1m",
+      "name": "Calibration Cube (1 m)",
+      "blurb": "Not a product. A 1.000 m reference cube used to prove the pipeline is metric. Place it next to a tape measure.",
+      "photo": "/photos/calibration-cube-1m.svg",
+      "model": "/models/calibration-cube-1m.glb",
+      "price": null,
+      "dims_cm": {
+        "w": 100,
+        "h": 100,
+        "d": 100
+      },
+      "placement": "floor",
+      "calibration": true,
+      "source": {
+        "author": "this project",
+        "url": null,
+        "license": "CC0"
+      }
+    },
+    {
+      "id": "calibration-cube-30cm",
+      "name": "Calibration Cube (30 cm)",
+      "blurb": "Not a product. A 30 cm reference cube for close-range scale checks.",
+      "photo": "/photos/calibration-cube-30cm.svg",
+      "model": "/models/calibration-cube-30cm.glb",
+      "price": null,
+      "dims_cm": {
+        "w": 30,
+        "h": 30,
+        "d": 30
+      },
+      "placement": "floor",
+      "calibration": true,
+      "source": {
+        "author": "this project",
+        "url": null,
+        "license": "CC0"
+      }
+    },
+    {
+      "id": "pot-plant",
+      "name": "Potted Plant",
+      "blurb": "Leafy indoor plant in a white ceramic pot. Floor standing.",
+      "photo": "/photos/pot-plant.svg",
+      "model": "/models/pot-plant.glb",
+      "price": 899,
+      "dims_cm": {
+        "w": 36,
+        "h": 72,
+        "d": 31
+      },
+      "placement": "floor",
+      "source": {
+        "author": "Jakers_H",
+        "url": null,
+        "license": "TBD"
+      }
+    },
+    {
+      "id": "stool-wooden",
+      "name": "Wooden Stool",
+      "blurb": "Simple round stool. Doubles as a plant stand or side table.",
+      "photo": "/photos/stool-wooden.svg",
+      "model": "/models/stool-wooden.glb",
+      "price": 2499,
+      "dims_cm": {
+        "w": 33,
+        "h": 45,
+        "d": 33
+      },
+      "placement": "floor",
+      "source": {
+        "author": "Poly by Google",
+        "url": null,
+        "license": "TBD"
+      }
+    },
+    {
+      "id": "closet",
+      "name": "Two-Door Closet",
+      "blurb": "Full-height wardrobe. Measure your alcove before buying.",
+      "photo": "/photos/closet.svg",
+      "model": "/models/closet.glb",
+      "price": 18999,
+      "dims_cm": {
+        "w": 191,
+        "h": 180,
+        "d": 44
+      },
+      "placement": "floor",
+      "source": {
+        "author": "Poly by Google",
+        "url": null,
+        "license": "TBD"
+      }
+    },
+    {
+      "id": "lamp-table",
+      "name": "Table Lamp With Shade",
+      "blurb": "Compact bedside lamp with a fabric shade.",
+      "photo": "/photos/lamp-table.svg",
+      "model": "/models/lamp-table.glb",
+      "price": 1499,
+      "dims_cm": {
+        "w": 16,
+        "h": 33,
+        "d": 16
+      },
+      "placement": "floor",
+      "source": {
+        "author": "CreativeTrio",
+        "url": null,
+        "license": "TBD"
+      }
+    },
+    {
+      "id": "chair-wooden",
+      "name": "Wooden Chair",
+      "blurb": "Classic wooden dining chair with a tall back.",
+      "photo": "/photos/chair-wooden.svg",
+      "model": "/models/chair-wooden.glb",
+      "price": 3999,
+      "dims_cm": {
+        "w": 48,
+        "h": 104,
+        "d": 53
+      },
+      "placement": "floor",
+      "source": {
+        "author": "Zsky",
+        "url": null,
+        "license": "TBD"
+      }
+    },
+    {
+      "id": "test-75cm",
+      "name": "Test Cube (75 cm)",
+      "blurb": "Diagnostic. Should measure exactly 75 cm per edge.",
+      "photo": "/photos/calibration-cube-30cm.svg",
+      "model": "/models/test-75cm.glb",
+      "price": null,
+      "dims_cm": {
+        "w": 75,
+        "h": 75,
+        "d": 75
+      },
+      "placement": "floor",
+      "calibration": true,
+      "source": {
+        "author": "this project",
+        "url": null,
+        "license": "CC0"
+      }
+    }
+  ],
+  "track2_presets": [
+    {
+      "id": "poster",
+      "label": "Poster / Art",
+      "axis": "w",
+      "cm": 60,
+      "placement": "wall"
+    },
+    {
+      "id": "frame",
+      "label": "Picture frame",
+      "axis": "w",
+      "cm": 30,
+      "placement": "wall"
+    },
+    {
+      "id": "box",
+      "label": "Shipping box",
+      "axis": "h",
+      "cm": 40,
+      "placement": "floor"
+    },
+    {
+      "id": "phone",
+      "label": "Phone",
+      "axis": "h",
+      "cm": 15,
+      "placement": "floor"
+    },
+    {
+      "id": "mug",
+      "label": "Mug",
+      "axis": "h",
+      "cm": 10,
+      "placement": "floor"
+    }
+  ]
+}

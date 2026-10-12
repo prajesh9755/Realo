@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Realo — See it in your room</title>
+  <meta name="description" content="A demo store where every product can be previewed in your own room at true real-world scale." />
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <header class="wrap site-head">
+    <a class="brand" href="/">Realo</a>
+    <nav>
+      <a href="/">Shop</a>
+      <a href="/try.html">Any image</a>
+    </nav>
+    <span class="spacer"></span>
+  </header>
+
+  <main class="wrap">
+    <div class="section-head">
+      <h1>New Arrivals</h1>
+      <a class="link-arrow" href="/try.html">Try any image <span id="arrow"></span></a>
+    </div>
+
+    <div id="grid" class="grid" aria-busy="true"></div>
+  </main>
+
+  <script type="module" src="/src/store/store.js"></script>
+</body>
+</html>

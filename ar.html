@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>View in real life — Realo</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <header class="wrap site-head">
+    <a class="brand" href="/">Realo</a>
+    <nav><a href="/">Shop</a><a href="/try.html">Any image</a></nav>
+    <span class="spacer"></span>
+  </header>
+
+  <main class="wrap arview">
+    <nav id="crumb" class="breadcrumb"></nav>
+
+    <div class="arview-grid">
+      <div class="arview-stage">
+        <model-viewer
+          id="mv"
+          camera-controls
+          touch-action="pan-y"
+          shadow-intensity="1"
+          exposure="1"
+          ar
+          ar-modes="scene-viewer webxr quick-look"
+          ar-scale="fixed"
+          ar-placement="floor">
+          <div class="mv-progress" slot="progress-bar"></div>
+          <button slot="ar-button" id="ar-button" class="btn btn-block">
+            <span id="ar-icon"></span> <span id="ar-label">View in your room</span>
+          </button>
+        </model-viewer>
+        <p id="stage-note" class="status"></p>
+      </div>
+
+      <aside class="arview-side">
+        <h1 id="p-name"></h1>
+        <p id="p-blurb" class="blurb"></p>
+
+        <!-- The scale claim, stated before AR launches. Scene Viewer cannot overlay
+             our own UI, so the number lives here and on the button. -->
+        <div class="scale-card">
+          <span class="scale-label">Real size</span>
+          <span id="p-dims" class="scale-dims"></span>
+          <span id="p-verified" class="scale-verified"></span>
+        </div>
+
+        <table class="spec">
+          <tr><th>Width</th><td id="p-w"></td></tr>
+          <tr><th>Height</th><td id="p-h"></td></tr>
+          <tr><th>Depth</th><td id="p-d"></td></tr>
+        </table>
+
+        <p class="callout">
+          <strong>Placed at true scale.</strong> The model is locked to its real dimensions,
+          so it cannot be resized by pinching. Stand it beside a tape measure to check.
+        </p>
+
+        <p><a class="calibrate-link" href="/calibrate.html">Sizes look off? Calibrate this device</a></p>
+
+        <p class="note"><a href="/" style="text-decoration:underline">Back to the store</a></p>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module"
+          src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.4.0/dist/model-viewer.min.js"></script>
+  <script type="module" src="/src/ar/main.js"></script>
+</body>
+</html>
