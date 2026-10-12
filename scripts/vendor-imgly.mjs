@@ -10,6 +10,12 @@
  *
  * Downloads only the quint8 model (~42MB) and the ONNX runtime (~33MB), not the
  * fp16/full models we never ask for.
+ *
+ * Assets are written as the content-addressed chunks the library actually
+ * fetches (it reads resources.json and requests each chunk by name), never as
+ * one concatenated file. That is also what keeps us deployable: the reassembled
+ * model is 42MB and Cloudflare Pages rejects any file over 25MB, while no
+ * single chunk exceeds 4MB.
  */
 import { writeFile, mkdir, stat } from 'node:fs/promises';
 import { dirname, resolve, join } from 'node:path';
@@ -60,39 +66,44 @@ for (const key of WANTED) {
     continue;
   }
 
-  const target = join(outDir, key.replace(/^\//, ''));
-  await mkdir(dirname(target), { recursive: true });
+  // Chunks are content-addressed: each lives at {BASE}/{hash} and the library
+  // reassembles them in the browser from resources.json. We mirror that layout
+  // flat in public/imgly/ rather than concatenating, so each file stays small.
+  let keyBytes = 0;
+  let fetched = 0;
 
-  if (await exists(target)) {
-    console.log(`  =  ${key} already vendored`);
-    continue;
-  }
-
-  // Chunks are content-addressed: each lives at {BASE}/{hash} and they
-  // concatenate in manifest order to reconstruct the file.
-  const parts = [];
   for (let i = 0; i < entry.chunks.length; i++) {
     const chunk = entry.chunks[i];
-    const res = await fetchOk(`${BASE}/${chunk.name ?? chunk.hash}`);
-    const bytes = Buffer.from(await res.arrayBuffer());
-
+    const name = chunk.name ?? chunk.hash;
+    const target = join(outDir, name);
     const [start, end] = chunk.offsets ?? [];
-    if (end !== undefined && bytes.length !== end - start) {
-      throw new Error(`${key} chunk ${i + 1}: expected ${end - start} bytes, got ${bytes.length}`);
+    const expected = end !== undefined ? end - start : undefined;
+
+    if (await exists(target)) {
+      keyBytes += expected ?? (await stat(target)).size;
+      continue;
     }
 
-    parts.push(bytes);
+    const res = await fetchOk(`${BASE}/${name}`);
+    const bytes = Buffer.from(await res.arrayBuffer());
+
+    if (expected !== undefined && bytes.length !== expected) {
+      throw new Error(`${key} chunk ${i + 1}: expected ${expected} bytes, got ${bytes.length}`);
+    }
+
+    await writeFile(target, bytes);
+    keyBytes += bytes.length;
+    fetched++;
     process.stdout.write(`\r  .. ${key} chunk ${i + 1}/${entry.chunks.length}   `);
   }
 
-  const buffer = Buffer.concat(parts);
-  if (entry.size && buffer.length !== entry.size) {
-    throw new Error(`${key}: reassembled ${buffer.length} bytes, manifest says ${entry.size}`);
+  if (entry.size && keyBytes !== entry.size) {
+    throw new Error(`${key}: chunks total ${keyBytes} bytes, manifest says ${entry.size}`);
   }
 
-  await writeFile(target, buffer);
-  totalBytes += buffer.length;
-  console.log(`\r  OK ${key.padEnd(46)} ${(buffer.length / 1048576).toFixed(1)}MB`);
+  totalBytes += keyBytes;
+  const note = fetched === 0 ? 'already vendored' : `${entry.chunks.length} chunks`;
+  console.log(`\r  OK ${key.padEnd(46)} ${(keyBytes / 1048576).toFixed(1)}MB  (${note})`);
 }
 
 console.log(`\nVendored ${(totalBytes / 1048576).toFixed(1)}MB into public/imgly/`);

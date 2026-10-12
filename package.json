@@ -6,13 +6,13 @@
   "description": "See how online products look in real life, at true real-world scale, via live camera AR.",
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
+    "build": "npm run imgly:vendor && vite build",
     "preview": "vite preview --host",
     "verify:scale": "node scripts/verify-model-scale.mjs",
     "models:rescale": "node scripts/rescale-model.mjs",
     "models:calibration": "node scripts/make-calibration-models.mjs",
-    "models:photos": "node scripts/make-placeholder-photos.mjs",
-    "imgly:vendor": "node scripts/vendor-imgly.mjs"
+    "imgly:vendor": "node scripts/vendor-imgly.mjs",
+    "photos": "node scripts/render-product-photos.mjs"
   },
   "dependencies": {
     "@imgly/background-removal": "^1.7.0",

@@ -1,0 +1,6 @@
+# SharedArrayBuffer is required by onnxruntime-web for threaded inference
+# (background removal on /try). vite.config.js sets these for the dev server
+# only; this file is what applies them to the deployed Cloudflare Pages site.
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
