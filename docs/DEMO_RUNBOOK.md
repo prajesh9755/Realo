@@ -15,6 +15,8 @@ actual floor you will present on.
 - [ ] Charge phone to 100%, charge power bank
 - [ ] Print: one A4 sheet at 100% scale, and this runbook
 - [ ] Pack: tape measure, patterned mat or newspaper, USB cable, power bank
+- [ ] **Re-run `/calibrate.html` in the actual demo room** — the offset is room- and
+      device-specific, and the disclosure on every product page comes from it
 
 ## Backup video (record while everything works)
 
@@ -22,7 +24,9 @@ Record on the phone, screen + room:
 1. Store grid → PDP → View in real life
 2. Reticle finding the floor → tap → model appears
 3. Walk around it — it stays anchored
-4. **Tape measure against the 1 m calibration cube** ← the money shot
+4. **Tape measure against the 1 m calibration cube** ← the money shot. Film the real
+   reading (~110 cm) *and* say the one-line explanation on camera — an unexplained 110
+   on tape is worse than no footage.
 5. Track 2: paste a poster → cutout → place
 
 Keep it under 90 seconds. This is tier 3 of the fallback ladder and your insurance.
@@ -85,16 +89,27 @@ WebXR needs a secure context; `adb reverse` gives you one over USB without certi
 2. **(60s) Track 1.** Store grid → it looks like any shop, flat photos → open the planter →
    "View in real life" → point at the floor → tap. *"That's 40 cm tall, which is its real
    size."*
-3. **(45s) Prove it.** Place the **1 m calibration cube**. Lay the tape measure against it.
-   Let them read it. **This is the single most persuasive thing you will do** — do not skip
-   it to save time.
+3. **(45s) Prove it — and own the error.** Place the **1 m calibration cube**. Lay the tape
+   measure against it. Let them read it: on this phone it reads **~110 cm, not 100**.
+   Say so before they say it:
+
+   > *"That's 10 cm out, and I know exactly why. The model is 100.00 cm — you can check the
+   > file. The phone puts the floor about 10 cm too low, so everything sits low and reads
+   > tall. It's the same 10 cm on a 30 cm cube and on this one, so it's the floor estimate,
+   > not the scale. I measured it on this device rather than guessing, and the app says so
+   > on every product page."*
+
+   **This is the single most persuasive thing you will do** — do not skip it to save time,
+   and **do not let them discover the 10 cm for you.** A measured, explained, disclosed
+   error reads as rigour; the same error caught by a judge reads as a broken claim.
+   Then show `/calibrate.html` — the instrument that produced the number.
 4. **(40s) Anchoring.** Walk around the object. It stays where you put it.
 5. **(40s) Track 2.** Paste a poster from a real store → background removed → pick "Poster
    60 cm" → place it on the wall. Say plainly: *"this one's a flat cutout and the size is my
    estimate — the measured 3D is the store catalog."*
-6. **(30s) Honesty + close.** "Accurate to within a couple of percent; the limit is the
-   phone's floor estimate, not the rendering." Then the pitch: fewer returns, more confident
-   buying.
+6. **(30s) Honesty + close.** "The models are measured to a fraction of a percent. The
+   limit is the phone's floor estimate, which we measure and show you rather than hide."
+   Then the pitch: fewer returns, more confident buying.
 
 ### If asked
 
@@ -102,7 +117,16 @@ WebXR needs a secure context; `adb reverse` gives you one over USB without certi
   accelerometer; a video stream alone has the metric information stripped out. Identical
   pixels can be a 40 cm pot or a 4 m pot. ([ARCHITECTURE.md](ARCHITECTURE.md))
 - **"How do you know it's the right size?"** → Three gates: Blender authoring, a runtime
-  assertion that auto-corrects drift, and ground alignment. Plus the tape measure, live.
+  assertion that auto-corrects drift, and ground alignment. `npm run verify:scale` proves
+  it headlessly over all nine assets. Plus the tape measure, live.
+- **"Then why did the cube read 110?"** → Two different numbers. The *asset* is 100.00 cm,
+  gated on every build. The *phone* places the floor ~10 cm low — constant on a 30 cm cube
+  and a 1 m one, so it's position, not scale. We measure it on this device and disclose it
+  per product. ([DECISIONS.md](DECISIONS.md) #13)
+- **"Why not just subtract the 10 cm?"** → AR hands off to Scene Viewer, which renders the
+  `.glb` from disk — no runtime hook. Baking it in would make the file stop matching its
+  declared dimensions and break the check that is our evidence. We'd be trading the proof
+  to patch a symptom.
 - **"Does it work on iPhone?"** → Not for live AR; Safari has no WebXR AR. It degrades
   automatically to a 3D preview. Production path would be USDZ + AR Quick Look.
 - **"Could it do any product on any site?"** → Track 2 does, as a flat cutout. True 3D

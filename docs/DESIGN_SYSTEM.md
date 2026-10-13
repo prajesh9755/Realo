@@ -100,9 +100,13 @@ Carried from the general anti-slop rules and verified against this codebase:
 
 ---
 
-## Known gap
+## Product card images
 
-`public/photos/*.svg` are generated to-scale silhouettes, not product photography. They use
-the light palette and Poppins so they sit correctly on the tiles, but they read as
-placeholders by design. Replace with real images as models are sourced; the store reads
-whatever `products.json` points at. See [MODELS.md](MODELS.md).
+`public/photos/*.png` are rendered from the actual `.glb` files by `npm run photos`
+(Playwright + `<model-viewer>` against the dev server), on the `#F3F5F7` tile background
+so they sit correctly in the grid.
+
+They are renders, not photography — which is the point: the card shows the same geometry
+AR will place, because it comes from the same file. The store reads whatever
+`products.json` points at, so real photography can be dropped in later without code
+changes. See [MODELS.md](MODELS.md).

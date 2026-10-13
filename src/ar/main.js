@@ -1,7 +1,7 @@
 import { getProduct, dimsLabel } from '../store/catalog.js';
 import { getProductIdFromUrl } from './session.js';
 import { verifyModelScale } from './verify.js';
-import { loadCalibration, correctionFactor, describe } from './calibration.js';
+import { loadCalibration, isSignificant, disclosure } from './calibration.js';
 import { icon } from '../ui/icons.js';
 
 const product = getProduct(getProductIdFromUrl());
@@ -40,25 +40,23 @@ async function init() {
       return;
     }
 
-    // Both facts matter: the asset is correct AND this device needed correcting.
-    // This resolves later than the calibration note, so it must not clobber it.
-    const cal = loadCalibration();
-    const f = correctionFactor(product.dims_cm.h, cal);
-    el.textContent = f !== 1
-      ? `verified, corrected ${describe(cal)} for this device`
-      : `verified to ±${(report.driftRatio * 100).toFixed(1)}%`;
-    el.classList.toggle('is-calibrated', f !== 1);
+    // This is a statement about the ASSET only: the .glb matches its declared
+    // dimensions. Device placement error is a separate claim, disclosed below.
+    el.textContent = `asset verified to ±${(report.driftRatio * 100).toFixed(1)}%`;
   });
 
   const mv = document.getElementById('mv');
 
-  // Scene Viewer renders the .glb as-is, so a device correction has to be applied
-  // to the model itself. The offset is additive, so the resulting factor depends on
-  // the object's height: 10cm is a third of a 30cm lamp but a tenth of a 1m cube.
+  // No runtime scale correction is applied, deliberately. Scene Viewer renders
+  // the .glb from disk and ar-scale="fixed" makes it honour the file's own
+  // dimensions, so a `scale` attribute here would change the page preview and
+  // nothing in AR. The file is already exact (verify:scale gates it); this
+  // device's floor-plane error is reported instead. See calibration.js.
   const calibration = loadCalibration();
-  const factor = correctionFactor(product.dims_cm.h, calibration);
-  if (factor !== 1) {
-    mv.setAttribute('scale', `${factor} ${factor} ${factor}`);
+  const deviceNote = document.getElementById('p-device');
+  if (isSignificant(calibration)) {
+    deviceNote.textContent = disclosure(product.dims_cm.h, calibration);
+    deviceNote.classList.remove('hide');
   }
 
   mv.setAttribute('src', product.model);

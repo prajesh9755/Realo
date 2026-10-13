@@ -59,6 +59,11 @@
           so it cannot be resized by pinching. Stand it beside a tape measure to check.
         </p>
 
+        <!-- Populated only when this device has been calibrated. The offset is
+             reported, never silently applied: Scene Viewer renders the .glb from
+             disk, so there is no runtime hook to apply it with. -->
+        <p id="p-device" class="device-note hide"></p>
+
         <p><a class="calibrate-link" href="/calibrate.html">Sizes look off? Calibrate this device</a></p>
 
         <p class="note"><a href="/" style="text-decoration:underline">Back to the store</a></p>

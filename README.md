@@ -6,9 +6,19 @@ reference, so a planter that looks right in a listing arrives too big for the sh
 Realo places the product in your actual room, through your phone's camera, **at its real
 measured size** — so you can check whether it fits before you buy.
 
-The core claim is narrow and testable: **what you see is the right size, to within a
-couple of percent.** You can check it on the spot with a tape measure, and we show you how
-in [docs/SCALE_VERIFICATION.md](docs/SCALE_VERIFICATION.md).
+The core claim is narrow and testable: **the 3D model is the product's real measured
+size.** You can check it on the spot with a tape measure, and we show you how in
+[docs/SCALE_VERIFICATION.md](docs/SCALE_VERIFICATION.md).
+
+Two error sources, kept separate because they have different fixes:
+
+- **The asset** — does the `.glb` match its declared dimensions? Gated by
+  `npm run verify:scale` on every build. Currently 0.00% for eight of nine models,
+  1.54% worst case.
+- **The device** — where does your phone think the floor is? ARCore's estimate is
+  imperfect; on our demo device it is **+9-10 cm, constant**. We *measure* this on
+  `/calibrate.html` and *disclose* it on the product page. We deliberately do not
+  silently correct it — [why](docs/DECISIONS.md).
 
 ---
 
@@ -16,7 +26,7 @@ in [docs/SCALE_VERIFICATION.md](docs/SCALE_VERIFICATION.md).
 
 | | Track 1 — demo store | Track 2 — any product image |
 |---|---|---|
-| Input | Our catalog of 7 items | Any image you paste |
+| Input | Our catalog of 9 items | Any image you paste |
 | Geometry | Real measured 3D model | Flat cutout, background removed |
 | Scale | **Measured** against declared dimensions | **Asserted** by you from a preset |
 | Honest? | Yes — this is the real claim | Width/height only; no depth |
@@ -85,6 +95,8 @@ adb reverse tcp:5173 tcp:5173
 | `npm run build` / `preview` | Production build / serve it |
 | `npm run verify:scale` | **Parses every `.glb` and checks it against `products.json`. Exits non-zero on drift.** |
 | `npm run models:calibration` | Writes the exactly-dimensioned reference cubes |
+| `npm run models:rescale -- <id>\|--all` | Bakes correct scale + base-at-y=0 into a `.glb` |
+| `npm run photos` | Re-renders the product card images (needs dev server + Playwright) |
 | `npm run imgly:vendor` | Downloads the background-removal model locally (~76MB) |
 
 ## Project layout
@@ -96,8 +108,8 @@ src/
   ar/      session, hittest, place, scale, billboard, ui, viewer, main
   track2/  clipboard, removebg, main
   store/   catalog, store, pdp
-scripts/   verify-model-scale, make-calibration-models, make-placeholder-photos, vendor-imgly
-public/    models/*.glb  photos/*.svg  imgly/ (vendored, gitignored)
+scripts/   verify-model-scale, make-calibration-models, rescale-model, render-product-photos, vendor-imgly
+public/    models/*.glb  photos/*.png  imgly/ (vendored, gitignored)
 docs/      see below
 ```
 

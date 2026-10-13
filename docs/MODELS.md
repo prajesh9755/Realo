@@ -103,13 +103,16 @@ materials, oversized textures, or excessive geometry.
 
 ---
 
-## Replacing the placeholder photos
+## Regenerating the product card images
 
-`public/photos/*.svg` are generated to-scale silhouettes, not real photography:
+`public/photos/*.png` are rendered from the `.glb` files themselves, so a card always
+depicts the geometry AR will place:
 
 ```bash
-node scripts/make-placeholder-photos.mjs
+npm run dev        # in one terminal — the renderer drives the real pages
+npm run photos     # in another; needs Playwright installed
 ```
 
-Swap in real images by dropping them in `public/photos/` and updating the `photo` field in
-`src/data/products.json`. The store reads whatever that field points at, so no code changes.
+Swap in real photography instead by dropping files in `public/photos/` and updating the
+`photo` field in `src/data/products.json`. The store reads whatever that field points at,
+so no code changes.

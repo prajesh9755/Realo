@@ -1,0 +1,9 @@
+# Normalise text to LF in the repository. The project was committed with mixed
+# endings (src/ar/main.js had a stray CRLF line), which made content diffs
+# unreadable. Binary assets are listed explicitly so they are never touched.
+* text=auto eol=lf
+
+*.glb   binary
+*.png   binary
+*.jpg   binary
+*.wasm  binary

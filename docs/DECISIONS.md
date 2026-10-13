@@ -153,6 +153,23 @@ specifics do not and were removed rather than left to mislead.
 
 ---
 
+## 11. Product card images rendered from the models themselves — *supersedes placeholder SVGs*
+
+**Originally decided.** `scripts/make-placeholder-photos.mjs` rendered a to-scale
+silhouette per product, so the store was legible before real assets existed.
+
+**Now decided.** `npm run photos` (`scripts/render-product-photos.mjs`) screenshots each
+`.glb` through `<model-viewer>` on the dev server, via Playwright. The placeholder script
+is gone. Landed in commit `b7ef232`.
+
+**Why.** Once the models were sourced and verified, a silhouette was strictly worse than a
+render of the thing itself — and the render is guaranteed to depict the same geometry that
+AR will place, because it comes from the same file.
+
+**Cost accepted:** `npm run photos` needs the dev server up and Playwright installed, so
+it is a manual step rather than part of `npm run build`.
+---
+
 ## 12. model-viewer / Scene Viewer as the primary AR path
 
 **Decided.** `ar.html` is built around `<model-viewer>` with `ar-modes="scene-viewer webxr quick-look"`
@@ -185,11 +202,40 @@ Scene Viewer.
 
 ---
 
-## 11. Placeholder product photos as generated SVGs
+---
 
-**Decided.** `node scripts/make-placeholder-photos.mjs` renders a to-scale silhouette per
-product, in the light palette and Poppins so they sit correctly on the tiles.
+## 13. The ARCore floor offset is measured and disclosed, not corrected
 
-**Why.** The store needs to be legible before real product photography or sourced models
-exist, and a to-scale silhouette communicates the dimensions honestly meanwhile. Replace
-with real photos as assets land — the store reads them from `products.json` either way.
+**Decided.** `calibrate.html` measures this device's floor-plane offset and stores it.
+Every product page then **states** it (`#p-device`). No model is rescaled at runtime.
+
+**Rejected:** applying a per-object correction factor so objects measure correctly in AR.
+
+**Why it cannot work.** An earlier version did exactly that — `ar/main.js` set
+`mv.setAttribute('scale', ...)` with a height-dependent factor. **It was a no-op in AR.**
+`scale` is a model-viewer *scene-graph* property: it transforms the in-page 3D preview.
+Track 1 AR hands off to Scene Viewer, which receives a URL and renders the `.glb` from
+disk, and `ar-scale="fixed"` explicitly tells it to honour the file's own dimensions. The
+net effect was a page preview silently shrunk to 2/3 size and **zero** change in AR — the
+worst case, because the UI claimed a correction that did not exist.
+
+**Why not bake it into the `.glb` instead.** That is the only way to really change what
+Scene Viewer renders, and it was rejected: the shipped file would no longer match its
+declared `dims_cm`, so `npm run verify:scale` — the gate that is this project's actual
+evidence of correctness — would start failing or have to be weakened. Trading away the
+proof to patch a symptom is a bad trade. Calibration is also per-device and discovered at
+runtime on the phone, so build-time baking cannot see it anyway.
+
+**What the measurement showed.** 30→40, 75→84, 100→110 cm: **+9-10 cm, constant across
+cube sizes.** Constant, not proportional — a 1.33× scale error would have put the metre
+cube at 133 cm. So ARCore seats the floor plane ~9-10 cm too low: objects sit too low and
+read too tall at the top edge regardless of their own height. It is a **position** error in
+the floor estimate, and the renderer itself is exactly metric.
+
+**What we say instead.** "This phone places objects about 9 cm taller than truth (~30% at
+this size). Measured on this device, not estimated." A characterised error source, stated
+in the product's own terms, is stronger than a silent fudge — and it is the honest version
+of the same information.
+
+**Revisit if:** Track 1 moves off Scene Viewer back to raw WebXR, where we control the
+scene graph and a real correction becomes possible (see #12 for why we left).

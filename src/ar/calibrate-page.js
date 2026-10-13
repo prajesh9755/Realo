@@ -55,9 +55,10 @@ document.getElementById('save').addEventListener('click', () => {
   try {
     const record = saveCalibration({ referenceCm: reference.cm, measuredCm: value });
     result.classList.remove('is-error');
-    result.textContent = record.offsetCm === 0
-      ? 'No correction needed on this device.'
-      : `Saved. Models will be corrected by ${record.offsetCm > 0 ? '\u2212' : '+'}${Math.abs(record.offsetCm).toFixed(1)} cm.`;
+    result.textContent = Math.abs(record.offsetCm) < 1
+      ? 'This device places objects accurately. Nothing to disclose.'
+      : `Saved. Product pages will now disclose that this phone places objects about ` +
+        `${Math.abs(record.offsetCm).toFixed(0)} cm ${record.offsetCm > 0 ? 'taller' : 'shorter'} than truth.`;
     render();
   } catch (err) {
     fail(err.message);
@@ -66,7 +67,7 @@ document.getElementById('save').addEventListener('click', () => {
 
 document.getElementById('clear').addEventListener('click', () => {
   clearCalibration();
-  result.textContent = 'Calibration removed. Models render at their exact declared size.';
+  result.textContent = 'Measurement removed. Product pages will stop showing the device note.';
   result.classList.remove('is-error');
   measured.value = '';
   render();
@@ -97,7 +98,8 @@ function render() {
   current.classList.toggle('hide', !calibration);
   if (calibration) {
     currentText.textContent =
-      ` This device reads ${calibration.offsetCm > 0 ? 'tall' : 'short'} by ${describe(calibration)}. ` +
-      `Measured against a ${calibration.referenceCm} cm reference.`;
+      ` This device places objects ${calibration.offsetCm > 0 ? 'tall' : 'short'} by ${describe(calibration)}, ` +
+      `measured against a ${calibration.referenceCm} cm reference. ` +
+      `Product pages disclose this; the models themselves are unchanged and still exact.`;
   }
 }
