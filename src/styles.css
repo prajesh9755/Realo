@@ -790,3 +790,39 @@ kbd {
 @media (max-width: 900px) {
   .roomview-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ---------- Human scale reference ---------- */
+.human-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 20px;
+}
+
+.human-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: var(--t14);
+  font-weight: 500;
+}
+.human-toggle input { width: 16px; height: 16px; accent-color: var(--ink); cursor: pointer; }
+
+#human-controls { margin-top: 14px; }
+#human-controls .field { margin-bottom: 6px; }
+
+#human-h {
+  flex: 1;
+  max-width: none;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+
+.human-out {
+  min-width: 62px;
+  text-align: right;
+  font-size: var(--t14);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}

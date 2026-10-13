@@ -32,6 +32,23 @@
         <span class="field-label">Add a product</span>
         <div id="catalog" class="room-catalog"></div>
 
+        <div class="human-panel">
+          <label class="human-toggle">
+            <input type="checkbox" id="human-on" />
+            <span>Show a person for scale</span>
+          </label>
+          <div id="human-controls" class="hide">
+            <label class="field">
+              <span>Their height</span>
+              <span class="field-row">
+                <input id="human-h" type="range" min="120" max="210" step="1" value="170" />
+                <output id="human-out" class="human-out">170 cm</output>
+              </span>
+            </label>
+            <p class="note">Set it to your own height, then compare. Drag the person to move them.</p>
+          </div>
+        </div>
+
         <div id="selected" class="scale-card hide">
           <span class="scale-label">Selected</span>
           <span id="sel-name" class="scale-dims"></span>
@@ -55,6 +72,8 @@
         <div class="room-refs">
           <span class="field-label">Scale references in the room</span>
           <ul class="steps">
+            <li>The person — <strong>whatever you set</strong></li>
+            <li>Wardrobe — <strong>220 cm</strong> tall, 180 wide</li>
             <li>Door — <strong>203 cm</strong> tall</li>
             <li>Ceiling — <strong>260 cm</strong></li>
             <li>Window sill — <strong>90 cm</strong> from the floor</li>

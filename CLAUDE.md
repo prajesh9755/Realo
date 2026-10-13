@@ -8,6 +8,11 @@ unless asked. Lead with the answer; a few lines or a short bullet list.
 Do the full work — just report it briefly. Still flag wrong numbers and real
 problems, but in one line, not a section.
 
+## Git
+
+**Never commit unless the user asks.** Build, show it, let them test and refine
+first. Commit only on their explicit go-ahead.
+
 ## Project
 
 Competition entry: a demo store where every product can be placed in your real

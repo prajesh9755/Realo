@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { products, dimsLabel, formatPrice } from '../store/catalog.js';
 import { buildRoom, buildLighting, ROOM } from './scene.js';
+import { buildWardrobe } from './fixtures.js';
 import { RoomPlacer } from './placer.js';
+import { HumanFigure, HEIGHT_RANGE } from './human.js';
 
 const canvas = document.getElementById('room-canvas');
 const note = document.getElementById('room-note');
@@ -30,6 +32,9 @@ const camera = new THREE.PerspectiveCamera(55, 1, 0.05, 60);
 camera.position.set(0, 1.55, ROOM.depth / 2 + 2.6);
 
 scene.add(buildRoom());
+// Part of the room, not the catalogue: fixed furniture that makes the space read
+// as real and gives the eye more known sizes to judge products against.
+scene.add(buildWardrobe());
 scene.add(buildLighting());
 
 const controls = new OrbitControls(camera, canvas);
@@ -51,8 +56,19 @@ const placer = new RoomPlacer(scene, camera, canvas);
 // Dragging an object must not also orbit the camera.
 placer.onDragStateChange = (dragging) => { controls.enabled = !dragging; };
 
+const human = new HumanFigure(scene);
+// Stand them clear of the doorway and of the back wall where products land,
+// far enough forward to be compared against something rather than flattened
+// against the wall.
+// Mid-room and to the right: close enough to the back wall to be compared
+// against furniture there, clear of the doorway, and far enough from the camera
+// that he does not fill the frame.
+human.setPosition(1.25, -0.9);
+placer.addExtra(human.group);
+
 renderCatalog();
 bindControls();
+bindHuman();
 resize();
 window.addEventListener('resize', resize);
 renderer.setAnimationLoop(() => {
@@ -94,6 +110,7 @@ function bindControls() {
 
   placer.onSelectionChange = (group) => {
     const product = group?.userData.product;
+    // The human is draggable but has no product card or rotate/remove controls.
     box.classList.toggle('hide', !product);
     panel.classList.toggle('hide', !product);
     if (!product) return;
@@ -109,6 +126,46 @@ function bindControls() {
   document.getElementById('clear').addEventListener('click', () => {
     placer.clear();
     note.textContent = 'Room cleared. Click a product to add it.';
+  });
+}
+
+function bindHuman() {
+  const toggle = document.getElementById('human-on');
+  const controls = document.getElementById('human-controls');
+  const slider = document.getElementById('human-h');
+  const out = document.getElementById('human-out');
+
+  slider.min = String(HEIGHT_RANGE.min);
+  slider.max = String(HEIGHT_RANGE.max);
+  slider.value = String(HEIGHT_RANGE.default);
+  out.textContent = `${HEIGHT_RANGE.default} cm`;
+
+  toggle.addEventListener('change', async () => {
+    controls.classList.toggle('hide', !toggle.checked);
+    if (!toggle.checked) {
+      human.setVisible(false);
+      return;
+    }
+    note.textContent = 'Loading the figure…';
+    try {
+      await human.load();
+      human.setHeight(Number(slider.value));
+      human.setVisible(true);
+      note.textContent = 'Set their height to your own, then compare. Drag to move them.';
+    } catch (err) {
+      toggle.checked = false;
+      controls.classList.add('hide');
+      note.textContent = `Could not load the figure. ${err.message}`;
+      note.classList.add('is-error');
+    }
+  });
+
+  slider.addEventListener('input', () => {
+    const cm = Number(slider.value);
+    out.textContent = `${cm} cm`;
+    human.setHeight(cm);
+    // Their footprint just changed, so the cached drag bounds are stale.
+    placer.invalidateFootprint(human.group);
   });
 }
 
