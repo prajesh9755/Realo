@@ -102,6 +102,11 @@ export class ArViewer {
       throw err;
     }
 
+    // Transient hit-test results exist ONLY while the touch is live. `select`
+    // fires on release, by which time the input source is gone and the results
+    // are empty -- so the tap pose must be captured on `selectstart`, while the
+    // finger is still down, and consumed by `select`.
+    session.addEventListener('selectstart', () => this.#onSelectStart());
     session.addEventListener('select', () => this.#onSelect());
     session.addEventListener('end', () => this.#onEnd());
 
@@ -115,15 +120,22 @@ export class ArViewer {
     await this.session?.end();
   }
 
+  /** Capture the tap-aimed pose while the finger is still down. */
+  #onSelectStart() {
+    if (this.placement.placed) return;
+    const frame = this.renderer.xr.getFrame();
+    if (!frame || !this.hitTester.supportsTapTarget) return;
+    this.hitTester.updateTransient(frame);
+  }
+
   #onSelect() {
     if (this.placement.placed) return;
     const frame = this.renderer.xr.getFrame();
     if (!frame) return;
 
-    // Transient results only exist while the touch is live, so the tap must be
-    // resolved here, inside the select event, not deferred to the frame loop.
+    // hasTapHit was set by #onSelectStart; do NOT re-read transient results here,
+    // the touch has ended and they are empty.
     const preferTap = this.hitTester.supportsTapTarget;
-    if (preferTap) this.hitTester.updateTransient(frame);
 
     if (this.placement.place(this.hitTester, { frame, enabled: this.enabled, preferTap })) {
       this.overlay.coach(COACH.placed);
@@ -134,6 +146,7 @@ export class ArViewer {
       // which is the failure mode the roaming reticle used to make visible.
       this.overlay.coach(COACH.noSurface);
     }
+    this.hitTester.hasTapHit = false;
   }
 
   #onEnd() {
@@ -189,6 +202,7 @@ export class ArViewer {
       this.overlay.debug(
         [
           `hit: ${this.hitTester.hasHit ? 'yes' : 'no'}`,
+          `tap-aim: ${this.hitTester.supportsTapTarget ? 'transient' : 'centre-ray'}`,
           `distance: ${d ? d.toFixed(3) + ' m' : '--'}`,
           `anchors: ${this.enabled.anchors ? 'on' : 'off'}`,
           this.scaleReport
