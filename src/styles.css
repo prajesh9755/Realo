@@ -710,3 +710,83 @@ kbd {
   font-size: var(--t14);
   margin-bottom: 8px;
 }
+
+/* ---------- Room designer ---------- */
+.roomview { padding-bottom: 60px; }
+
+.roomview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 28px;
+  align-items: start;
+}
+
+.roomview-stage canvas {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  background: var(--tile);
+  /* The scene is draggable, so suppress the browser's own pan/zoom gestures. */
+  touch-action: none;
+  cursor: grab;
+}
+.roomview-stage canvas:active { cursor: grabbing; }
+
+.room-catalog {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.room-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px;
+  background: var(--tile);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+.room-chip:hover { border-color: var(--line); background: #eef0f2; }
+.room-chip img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+.room-chip-name {
+  font-size: var(--t14);
+  font-weight: 500;
+  color: var(--ink);
+}
+.room-chip-dims {
+  font-size: var(--t12);
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.room-controls {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 20px;
+}
+.room-controls .btn {
+  flex: 1;
+  /* Icon and label must stay on one line; the pill buttons wrapped otherwise. */
+  white-space: nowrap;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.room-refs { margin: 22px 0; }
+.room-refs .steps { margin-bottom: 0; }
+
+@media (max-width: 900px) {
+  .roomview-grid { grid-template-columns: minmax(0, 1fr); }
+}

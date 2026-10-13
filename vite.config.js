@@ -17,6 +17,7 @@ export default defineConfig({
         product: resolve(__dirname, 'product.html'),
         ar: resolve(__dirname, 'ar.html'),
         try: resolve(__dirname, 'try.html'),
+        room: resolve(__dirname, 'room.html'),
         calibrate: resolve(__dirname, 'calibrate.html')
       }
     }

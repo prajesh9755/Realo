@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Design a room — Realo</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <header class="wrap site-head">
+    <a class="brand" href="/">Realo</a>
+    <nav><a href="/">Shop</a><a href="/room.html">Design a room</a><a href="/try.html">Any image</a></nav>
+    <span class="spacer"></span>
+  </header>
+
+  <main class="wrap roomview">
+    <div class="section-head">
+      <h1>Design a room</h1>
+      <p class="blurb">
+        Place products in a room built to real measurements — 5.0 × 4.0 m, 2.6 m ceiling.
+        Everything is drawn at its true size, so what fits here fits at home.
+      </p>
+    </div>
+
+    <div class="roomview-grid">
+      <div class="roomview-stage">
+        <canvas id="room-canvas"></canvas>
+        <p id="room-note" class="status">Loading the room…</p>
+      </div>
+
+      <aside class="roomview-side">
+        <span class="field-label">Add a product</span>
+        <div id="catalog" class="room-catalog"></div>
+
+        <div id="selected" class="scale-card hide">
+          <span class="scale-label">Selected</span>
+          <span id="sel-name" class="scale-dims"></span>
+          <span id="sel-dims" class="scale-verified"></span>
+        </div>
+
+        <div id="controls" class="hide">
+          <div class="room-controls">
+            <button id="rot-left" class="btn btn-outline btn-sm">⟲ Left</button>
+            <button id="rot-right" class="btn btn-outline btn-sm">Right ⟳</button>
+            <button id="remove" class="btn btn-outline btn-sm">Remove</button>
+          </div>
+        </div>
+
+        <p class="callout">
+          <strong>Drawn at true scale.</strong> Every model is the product's real measured
+          size — the same file AR places in your room. Drag to move it on the floor.
+          There is no resize handle, deliberately.
+        </p>
+
+        <div class="room-refs">
+          <span class="field-label">Scale references in the room</span>
+          <ul class="steps">
+            <li>Door — <strong>203 cm</strong> tall</li>
+            <li>Ceiling — <strong>260 cm</strong></li>
+            <li>Window sill — <strong>90 cm</strong> from the floor</li>
+            <li>Skirting — <strong>10 cm</strong></li>
+          </ul>
+        </div>
+
+        <button id="clear" class="btn btn-outline btn-block">Clear the room</button>
+        <p class="note"><a href="/" style="text-decoration:underline">Back to the store</a></p>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module" src="/src/room/main.js"></script>
+</body>
+</html>
