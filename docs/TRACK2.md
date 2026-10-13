@@ -77,6 +77,42 @@ experience.
 4. **Live derived readout:** *"Will appear 60 cm wide × 84 cm tall (you set width; the other
    follows the image proportions)."* The user always sees both numbers before placing.
 
+## Placement: tap where you want it
+
+Track 2 runs our own three.js + WebXR session (Track 1 hands off to Scene Viewer, which
+owns its own placement UI — see [DECISIONS.md](DECISIONS.md) #12). So here we control the
+interaction, and it is **tap-to-place**: no roaming reticle, the object lands under the
+finger.
+
+**How the aiming works.** WebXR offers two hit-test sources and they answer different
+questions:
+
+| Source | Ray | Used for |
+|---|---|---|
+| `requestHitTestSource` (viewer space) | fixed, out of the camera centre | `?debug=1`, the optional reticle, fallback placement |
+| `requestHitTestSourceForTransientInput` | through the actual touch point | **placement and drag** |
+
+A viewer-space source cannot be aimed at a screen coordinate — there is no API for it —
+which is why tap-to-place needs the transient source rather than a tweak to the old loop.
+
+**Both are metric**, so this changes *aiming*, not measurement. Track 2's honesty line is
+unmoved: the size is still user-asserted from a preset, and the depth is still sensor-derived.
+
+**When the finger can aim, the finger is the only authority.** If a tap misses a surface we
+refuse and say so (`COACH.noSurface`) rather than falling back to the centre ray. Placing
+the object somewhere the user did not point is a silent wrong answer, and those are exactly
+what this project is built to avoid.
+
+| Transient input | Tap hit a surface | Result |
+|---|---|---|
+| yes | yes | placed **under the finger** |
+| yes | no | refused — "No surface found there" |
+| no (older ARCore) | — | falls back to the centre ray, as before |
+
+**`?reticle=1`** puts the ring back on screen. It is the only way to see what the centre
+ray is doing when diagnosing a surface that will not hold a hit, so it is kept — but it is
+off by default, because a reticle the user must line up is the thing we just removed.
+
 ---
 
 ## Making a flat plane convincing

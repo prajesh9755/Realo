@@ -47,9 +47,15 @@ export class ArOverlay {
   }
 }
 
+/**
+ * Tap-to-place wording: the user aims with their finger, not with a reticle, so
+ * the instruction names the tap rather than a ring to wait for. `found` is only
+ * used when ?reticle=1 puts the ring back on screen.
+ */
 export const COACH = {
-  searching: 'Point your camera at the floor and move the phone slowly.',
+  searching: 'Move the phone slowly over the surface, then tap where you want it.',
   found: 'Tap to place it at its real size.',
+  noSurface: 'No surface found there. Move the phone slowly to scan, then tap again.',
   placed: 'Walk around it. Drag to move, twist with two fingers to rotate.',
   lost: 'Tracking lost. Move the phone slowly over a textured surface.'
 };

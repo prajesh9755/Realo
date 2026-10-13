@@ -239,3 +239,39 @@ of the same information.
 
 **Revisit if:** Track 1 moves off Scene Viewer back to raw WebXR, where we control the
 scene graph and a real correction becomes possible (see #12 for why we left).
+
+---
+
+## 14. Track 2 places on tap, not via a reticle
+
+**Decided.** Track 2 drops the roaming reticle. The user taps and the object lands under
+their finger, via `requestHitTestSourceForTransientInput`.
+
+**Scope:** Track 2 only. Track 1 hands off to Scene Viewer, which owns its in-AR
+interaction entirely — there is no hook to change it (#12). Asking for manual placement on
+a product page means leaving Scene Viewer and re-fighting the tracking drift that drove us
+to it.
+
+**Why the old approach could not just be tweaked.** The existing source is requested
+against the `viewer` reference space, so its ray points out of the camera centre and its
+direction is fixed. **There is no API to aim a viewer-space source at a screen
+coordinate.** Tap-to-place therefore needs the transient-input source, which is keyed to
+touch and raycasts through the touch point.
+
+**Both sources return metric poses**, so this changes aiming, not measurement. Track 2's
+honesty line does not move: size is still user-asserted from a preset, depth still
+sensor-derived.
+
+**The decision that matters: when the finger can aim, it is the only authority.** The first
+cut fell back to the centre ray when a tap missed a surface. That meant a user could tap one
+spot and have the object appear somewhere else — a silent wrong answer, which is the failure
+mode this project is built to refuse. It now declines and says "No surface found there."
+
+**Cost accepted.** The reticle was continuous feedback that a surface existed at all, and
+removing it makes a failed tap the first sign of trouble — which bites hardest on walls,
+already the least reliable case ([RISKS.md](RISKS.md) #8). Mitigated with an explicit
+`noSurface` message and `?reticle=1` to bring the ring back for diagnosis.
+
+**Devices without transient input** (older ARCore builds) fall back to the previous
+centre-ray behaviour. The feature is requested in a try/catch and guards both the method
+and `XRRay`, so its absence can never fail the session.

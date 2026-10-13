@@ -27,8 +27,13 @@ export class ArViewer {
     dir.position.set(0.5, 3, 0.8);
     this.scene.add(dir);
 
+    // Tap-to-place is the default: no roaming reticle, the object lands where the
+    // user's finger is. The reticle is kept behind ?reticle=1 because it is the
+    // only way to see what the centre ray is doing when diagnosing a bad surface.
+    this.showReticle = new URLSearchParams(location.search).get('reticle') === '1';
     this.reticle = createReticle();
-    this.scene.add(this.reticle);
+    this.reticle.visible = false;
+    if (this.showReticle) this.scene.add(this.reticle);
 
     this.hitTester = new HitTester();
     this.placement = new Placement(this.scene);
@@ -113,10 +118,21 @@ export class ArViewer {
   #onSelect() {
     if (this.placement.placed) return;
     const frame = this.renderer.xr.getFrame();
-    if (this.placement.place(this.hitTester, { frame, enabled: this.enabled })) {
+    if (!frame) return;
+
+    // Transient results only exist while the touch is live, so the tap must be
+    // resolved here, inside the select event, not deferred to the frame loop.
+    const preferTap = this.hitTester.supportsTapTarget;
+    if (preferTap) this.hitTester.updateTransient(frame);
+
+    if (this.placement.place(this.hitTester, { frame, enabled: this.enabled, preferTap })) {
       this.overlay.coach(COACH.placed);
       this.overlay.showPlaced(true);
       this.reticle.visible = false;
+    } else {
+      // Nothing under the finger. Say which surface failed rather than going silent,
+      // which is the failure mode the roaming reticle used to make visible.
+      this.overlay.coach(COACH.noSurface);
     }
   }
 
@@ -143,15 +159,24 @@ export class ArViewer {
     }
 
     if (!this.placement.placed) {
+      // The centre ray still runs: it feeds ?debug=1, the optional reticle, and the
+      // fallback placement path on devices without transient input.
       const had = this.hitTester.hasHit;
-      const hit = this.hitTester.update(frame, this.reticle);
-      if (hit && !had) this.overlay.coach(COACH.found);
-      if (!hit && had) this.overlay.coach(COACH.searching);
+      const hit = this.hitTester.update(frame, this.showReticle ? this.reticle : null);
+      // With a reticle on screen, "found" means the ring locked on. Without one,
+      // the centre ray is invisible to the user, so promising "tap to place" off it
+      // would be describing something they cannot see.
+      if (this.showReticle) {
+        if (hit && !had) this.overlay.coach(COACH.found);
+        if (!hit && had) this.overlay.coach(COACH.searching);
+      }
     } else {
       this.placement.update(frame, this.hitTester.localSpace);
       if (this.isDragging) {
+        const preferTap = this.hitTester.supportsTapTarget;
+        if (preferTap) this.hitTester.updateTransient(frame);
         this.hitTester.update(frame, null);
-        this.placement.moveTo(this.hitTester);
+        this.placement.moveTo(this.hitTester, { preferTap });
       }
       if (this.billboard) {
         const xrCamera = this.renderer.xr.getCamera();

@@ -29,10 +29,17 @@ export class Placement {
     return this;
   }
 
-  place(hitTester, { frame, enabled } = {}) {
-    if (!this.content || !hitTester.hasHit) return false;
+  place(hitTester, { frame, enabled, preferTap = false } = {}) {
+    if (!this.content) return false;
 
-    hitTester.applyToObject(this.group);
+    // When the device can aim at the finger, the finger is the ONLY authority. If
+    // the tap missed a surface we refuse rather than quietly substituting the
+    // centre ray: landing the object somewhere the user did not point is the kind
+    // of silent wrong answer this project exists to avoid. They can tap again.
+    const canPlace = preferTap ? hitTester.hasTapHit : hitTester.hasHit;
+    if (!canPlace) return false;
+
+    hitTester.applyToObject(this.group, { preferTap });
     this.yawOffset = 0;
     this.group.visible = true;
     this.placed = true;
@@ -73,10 +80,13 @@ export class Placement {
     this.group.rotateY(radians);
   }
 
-  moveTo(hitTester) {
-    if (!this.placed || !hitTester.hasHit) return false;
+  moveTo(hitTester, { preferTap = false } = {}) {
+    if (!this.placed) return false;
+    // Same rule as place(): follow the finger or do nothing. A drag that jumped to
+    // screen centre whenever the finger left the floor would feel broken.
+    if (!(preferTap ? hitTester.hasTapHit : hitTester.hasHit)) return false;
     const yaw = this.yawOffset;
-    hitTester.applyToObject(this.group);
+    hitTester.applyToObject(this.group, { preferTap });
     this.group.rotateY(yaw);
     return true;
   }

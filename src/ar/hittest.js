@@ -1,9 +1,22 @@
 import * as THREE from 'three';
 
 /**
- * Reticle + hit-test source, following the upstream three.js webxr_ar_hittest pattern.
+ * Reticle + hit-test sources, following the upstream three.js webxr_ar_hittest pattern.
  * hit-test is the shipped WebXR feature (plane-detection is still a developer trial),
  * and its poses are metric, which is what the true-scale claim rests on.
+ *
+ * TWO SOURCES, because WebXR offers two and they answer different questions:
+ *
+ * - The VIEWER source raycasts straight out of the camera centre. Its ray direction
+ *   is fixed, so it cannot answer "what is under the user's finger" -- there is no
+ *   API to aim a viewer-space source at a screen coordinate.
+ * - The TRANSIENT source (requestHitTestSourceForTransientInput) is keyed to touch
+ *   input and raycasts through the actual touch point, which is what tap-to-place
+ *   needs.
+ *
+ * We keep both: transient for placement where the device supports it, viewer as the
+ * fallback and for the drag-to-reposition loop. Both return metric poses, so the
+ * scale guarantee is identical either way -- this changes aiming, not measurement.
  */
 /** Returns the first reference space the device actually grants. */
 async function requestFirstSupportedSpace(session, types) {
@@ -36,10 +49,15 @@ export function createReticle() {
 export class HitTester {
   constructor() {
     this.source = null;
+    this.transientSource = null;
     this.localSpace = null;
     this.lastHitMatrix = new THREE.Matrix4();
     this.hasHit = false;
     this.distance = null;
+    // Set when a tap produced its own hit, so callers can tell a deliberate
+    // placement from whatever the centre ray happened to be pointing at.
+    this.lastTapMatrix = new THREE.Matrix4();
+    this.hasTapHit = false;
   }
 
   async start(session) {
@@ -49,15 +67,42 @@ export class HitTester {
     this.localSpace = await requestFirstSupportedSpace(session, ['local', 'local-floor', 'viewer']);
     const viewerSpace = await session.requestReferenceSpace('viewer');
     this.source = await session.requestHitTestSource({ space: viewerSpace });
+
+    // Optional: absent on older ARCore builds, so never let it fail the session.
+    // Without it we simply fall back to the centre ray, which is how this worked
+    // before tap-to-place existed.
+    try {
+      // Guard both the method AND XRRay: `new XRRay()` in the argument list would
+      // be evaluated before the optional call could short-circuit, so a device
+      // missing XRRay would throw here rather than fall back.
+      if (typeof session.requestHitTestSourceForTransientInput !== 'function' ||
+          typeof XRRay !== 'function') {
+        throw new Error('requestHitTestSourceForTransientInput / XRRay not available');
+      }
+      this.transientSource = await session.requestHitTestSourceForTransientInput({
+        profile: 'generic-touchscreen',
+        offsetRay: new XRRay()
+      }) ?? null;
+    } catch (err) {
+      console.info('[hittest] transient input unavailable, using centre ray:', err.message);
+      this.transientSource = null;
+    }
+  }
+
+  get supportsTapTarget() {
+    return !!this.transientSource;
   }
 
   /** Must be called on session end, or re-entering AR silently yields no hits. */
   stop() {
     this.source?.cancel?.();
+    this.transientSource?.cancel?.();
     this.source = null;
+    this.transientSource = null;
     this.localSpace = null;
     this.hasHit = false;
     this.distance = null;
+    this.hasTapHit = false;
   }
 
   update(frame, reticle) {
@@ -95,16 +140,44 @@ export class HitTester {
   }
 
   /**
+   * Hit under the user's finger, for this frame only. Transient results exist
+   * just while a touch is active, so this must be read during the frame the tap
+   * is handled -- there is nothing to query afterwards.
+   *
+   * Returns true when a tap-aimed hit was found; the pose lands in lastTapMatrix.
+   */
+  updateTransient(frame) {
+    this.hasTapHit = false;
+    if (!this.transientSource || !this.localSpace) return false;
+
+    for (const perInput of frame.getHitTestResultsForTransientInput(this.transientSource)) {
+      const hit = perInput.results?.[0];
+      if (!hit) continue;
+      const pose = hit.getPose(this.localSpace);
+      if (!pose) continue;
+      this.lastTapMatrix.fromArray(pose.transform.matrix);
+      this.hasTapHit = true;
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Position from the hit, yaw only from its orientation: furniture must stand
    * upright even when the surface estimate is tilted or noisy.
+   *
+   * `preferTap` uses the tap-aimed pose when this frame produced one, so the
+   * object lands under the finger rather than at the screen centre.
    */
-  applyToObject(object3d) {
-    if (!this.hasHit) return false;
+  applyToObject(object3d, { preferTap = false } = {}) {
+    const useTap = preferTap && this.hasTapHit;
+    if (!useTap && !this.hasHit) return false;
 
     const position = new THREE.Vector3();
     const quaternion = new THREE.Quaternion();
     const scale = new THREE.Vector3();
-    this.lastHitMatrix.decompose(position, quaternion, scale);
+    const matrix = useTap ? this.lastTapMatrix : this.lastHitMatrix;
+    matrix.decompose(position, quaternion, scale);
 
     object3d.position.copy(position);
     const euler = new THREE.Euler().setFromQuaternion(quaternion, 'YXZ');
