@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Your room from a photo — Realo</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <header class="wrap site-head">
+    <a class="brand" href="/">Realo</a>
+    <nav>
+      <a href="/">Shop</a>
+      <a href="/room.html">Design a room</a>
+      <a href="/photo.html">From a photo</a>
+      <a href="/try.html">Any image</a>
+    </nav>
+    <span class="spacer"></span>
+  </header>
+
+  <main class="wrap photoview">
+    <div class="section-head">
+      <h1>Your room, from a photo</h1>
+      <p class="blurb">
+        Photograph a corner of your room, trace its edges, and give one real
+        measurement. We work out the camera's geometry and place products into
+        that space at the right size.
+      </p>
+    </div>
+
+    <div class="photoview-grid">
+      <div class="photoview-stage">
+        <div id="drop" class="photo-drop">
+          <p><strong>Drop a photo here</strong>, paste it, or <label for="file" class="photo-pick">choose a file</label>.</p>
+          <p class="note">A corner works best: two walls meeting the floor, shot straight-on-ish.</p>
+          <input id="file" type="file" accept="image/*" hidden />
+        </div>
+
+        <div id="canvas-wrap" class="photo-canvas-wrap hide">
+          <canvas id="photo-canvas"></canvas>
+          <canvas id="overlay-canvas"></canvas>
+        </div>
+        <p id="stage-note" class="status"></p>
+      </div>
+
+      <aside class="photoview-side">
+        <!-- Step 1 -->
+        <div id="step-lines" class="photo-step hide">
+          <span class="field-label">Step 1 — trace the edges</span>
+          <p class="note">
+            Drag each handle onto a real edge of the room. Two lines must run along
+            <strong>one</strong> wall direction, two along the <strong>other</strong>.
+          </p>
+          <div id="line-legend" class="line-legend"></div>
+          <div id="solve-state" class="solve-state"></div>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="step-scale" class="photo-step hide">
+          <span class="field-label">Step 2 — one real measurement</span>
+          <p class="note">
+            Nothing in a photo says how big the room is. Drag the yellow line onto
+            something you can measure, then type its real size.
+          </p>
+          <label class="field">
+            <span>That yellow line is really…</span>
+            <span class="field-row">
+              <input id="ref-cm" type="number" min="5" max="500" step="1" value="200" inputmode="decimal" />
+              <span class="status">cm</span>
+            </span>
+          </label>
+          <p class="note">Common: door 203 · floor tile 60 · wardrobe 180–210 · skirting 10</p>
+          <button id="apply" class="btn btn-block">Build the space</button>
+        </div>
+
+        <!-- Step 3 -->
+        <div id="step-place" class="photo-step hide">
+          <span class="field-label">Step 3 — place a product</span>
+          <div id="catalog" class="room-catalog"></div>
+          <div id="selected" class="scale-card hide">
+            <span class="scale-label">Selected</span>
+            <span id="sel-name" class="scale-dims"></span>
+            <span id="sel-dims" class="scale-verified"></span>
+          </div>
+          <div id="place-controls" class="room-controls hide">
+            <button id="rot-left" class="btn btn-outline btn-sm">⟲ Left</button>
+            <button id="rot-right" class="btn btn-outline btn-sm">Right ⟳</button>
+            <button id="remove" class="btn btn-outline btn-sm">Remove</button>
+          </div>
+        </div>
+
+        <div id="step-walls" class="photo-step hide">
+          <span class="field-label">Walls</span>
+          <label class="human-toggle">
+            <input type="checkbox" id="collision-on" checked />
+            <span>Stop products at the walls</span>
+          </label>
+          <label class="human-toggle" style="margin-top:8px">
+            <input type="checkbox" id="occlusion-on" checked />
+            <span>Hide anything behind them</span>
+          </label>
+          <p class="note">
+            Drag a product into the corner and it should come to rest against the
+            wall. If it stops too early or too late, move the wall:
+          </p>
+          <div class="room-controls">
+            <button id="wall-near" class="btn btn-outline btn-sm">← Nearer</button>
+            <button id="wall-far" class="btn btn-outline btn-sm">Further →</button>
+          </div>
+        </div>
+
+        <div id="accuracy" class="callout hide"></div>
+
+        <button id="restart" class="btn btn-outline btn-block hide">Start over with a new photo</button>
+        <p class="note"><a href="/" style="text-decoration:underline">Back to the store</a></p>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module" src="/src/photo/main.js"></script>
+</body>
+</html>

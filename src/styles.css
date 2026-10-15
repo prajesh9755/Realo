@@ -826,3 +826,82 @@ kbd {
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
+
+/* ---------- Photo reconstruction (Track 4) ---------- */
+.photoview { padding-bottom: 60px; }
+
+.photoview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 28px;
+  align-items: start;
+}
+
+.photo-drop {
+  border: 2px dashed var(--line);
+  border-radius: 10px;
+  padding: 56px 24px;
+  text-align: center;
+  background: var(--tile);
+}
+.photo-drop.is-over { border-color: var(--ink); background: #eef0f2; }
+.photo-drop p { margin: 0 0 6px; }
+.photo-pick { text-decoration: underline; cursor: pointer; }
+
+/* The three canvases stack exactly: photo, products, tracing lines. */
+.photo-canvas-wrap {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--tile);
+  touch-action: none;
+}
+.photo-canvas-wrap canvas {
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+#photo-canvas { position: relative; z-index: 0; }
+#gl-canvas { z-index: 1; }
+#overlay-canvas { z-index: 2; cursor: crosshair; }
+/* Once products are placed the lines are reference only, and must stop
+   swallowing clicks meant for a product. */
+#overlay-canvas.is-faded { opacity: 0.35; pointer-events: none; }
+
+.photo-step { margin-bottom: 26px; }
+
+.line-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0;
+}
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--t12);
+  color: var(--ink-muted);
+}
+.legend-row i {
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+  flex: none;
+}
+
+.solve-state {
+  font-size: var(--t12);
+  line-height: 1.5;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: var(--tile);
+}
+.solve-state.is-ok { color: var(--green); }
+.solve-state.is-bad { color: var(--red); }
+
+#apply:disabled { opacity: 0.45; cursor: not-allowed; }
+
+@media (max-width: 900px) {
+  .photoview-grid { grid-template-columns: minmax(0, 1fr); }
+}

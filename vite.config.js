@@ -18,6 +18,7 @@ export default defineConfig({
         ar: resolve(__dirname, 'ar.html'),
         try: resolve(__dirname, 'try.html'),
         room: resolve(__dirname, 'room.html'),
+        photo: resolve(__dirname, 'photo.html'),
         calibrate: resolve(__dirname, 'calibrate.html')
       }
     }
